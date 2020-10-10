@@ -45,7 +45,7 @@ public class FeignClientScanner extends ClassPathBeanDefinitionScanner {
 
         for (BeanDefinitionHolder holder : beanDefinitions) {
             GenericBeanDefinition definition = (GenericBeanDefinition) holder.getBeanDefinition();
-            MergedAnnotation<FeignClient> wildFeignClient = ((ScannedGenericBeanDefinition) definition)
+            MergedAnnotation<FeignClient> mergedAnnotation = ((ScannedGenericBeanDefinition) definition)
                     .getMetadata()
                     .getAnnotations()
                     .get(FeignClient.class);
@@ -54,7 +54,7 @@ public class FeignClientScanner extends ClassPathBeanDefinitionScanner {
             definition.setBeanClass(FeignFactoryBean.class);
 
             definition.getPropertyValues().add("proxyInterface", beanClassName);
-            definition.getPropertyValues().add("wildFeignClient", wildFeignClient.synthesize());
+            definition.getPropertyValues().add("feignClient", mergedAnnotation.synthesize());
         }
 
         return beanDefinitions;

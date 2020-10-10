@@ -37,7 +37,7 @@ public class FeignFactoryBean<T> implements FactoryBean<T>, ApplicationContextAw
     @Override
     @SuppressWarnings("unchecked")
     public T getObject() throws Exception {
-        OkHttpTemplate wildHttpClient = applicationContext.getBean(OkHttpTemplate.class);
+        OkHttpTemplate okHttpTemplate = applicationContext.getBean(OkHttpTemplate.class);
         IJsonSerializer jsonSerializer = applicationContext.getBean(IJsonSerializer.class);
         Class<?> factoryClass = feignClient.fallbackFactory();
         String beanName = this.lowerCaseFirst(factoryClass.getSimpleName());
@@ -49,7 +49,7 @@ public class FeignFactoryBean<T> implements FactoryBean<T>, ApplicationContextAw
         PropertySourcesPlaceholdersResolver resolver = new PropertySourcesPlaceholdersResolver(applicationContext.getEnvironment());
         String url = String.valueOf(resolver.resolvePlaceholders(feignClient.url()));
 
-        return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{this.proxyInterface}, new FeignProxy(wildHttpClient, jsonSerializer, fallbackFactory, url));
+        return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{this.proxyInterface}, new FeignProxy(okHttpTemplate, jsonSerializer, fallbackFactory, url));
     }
 
     @Override

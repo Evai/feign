@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(FeignRegister.class)
-public @interface EnableWildFeignClient {
+public @interface EnableFeignClient {
 
     /**
      * Base packages to scan for annotated components.

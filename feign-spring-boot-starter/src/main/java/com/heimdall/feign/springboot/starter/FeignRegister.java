@@ -27,7 +27,7 @@ public class FeignRegister implements ImportBeanDefinitionRegistrar, ResourceLoa
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableWildFeignClient.class.getName()));
+        AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableFeignClient.class.getName()));
 
 
         List<String> basePackages = new ArrayList<>();

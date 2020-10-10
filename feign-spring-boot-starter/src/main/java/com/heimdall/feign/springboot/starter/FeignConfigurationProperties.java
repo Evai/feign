@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author crh
  * @date 2020-09-13
  */
-@ConfigurationProperties(value = "wild.feign.client", ignoreInvalidFields = true)
+@ConfigurationProperties(value = "heimdall.feign.client", ignoreInvalidFields = true)
 public class FeignConfigurationProperties {
 
     private int maxIdleConnections = 10;

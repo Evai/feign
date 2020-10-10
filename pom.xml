@@ -12,9 +12,10 @@
 
 
     <modules>
-        <module>feign-parent</module>
+        <module>feign-spring-boot-parent</module>
         <module>feign-core</module>
         <module>feign-spring-boot-starter</module>
+        <module>feign-demo</module>
     </modules>
 
 </project>

@@ -52,16 +52,16 @@ public class FeignProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         FeignClient feignClient = method.getDeclaringClass().getDeclaredAnnotation(FeignClient.class);
-        RequestMapping wildRequestMapping = method.getDeclaredAnnotation(RequestMapping.class);
+        RequestMapping requestMapping = method.getDeclaredAnnotation(RequestMapping.class);
 
         String url = this.url;
 
-        String uri = this.wrapperPathVariableUri(method, args, wildRequestMapping.value());
+        String uri = this.wrapperPathVariableUri(method, args, requestMapping.value());
 
         url += uri;
 
         String[] headers1 = feignClient.headers();
-        String[] headers2 = wildRequestMapping.headers();
+        String[] headers2 = requestMapping.headers();
 
         String[] mergeHeaders = this.mergeArray(headers1, headers2);
 
@@ -70,7 +70,7 @@ public class FeignProxy implements InvocationHandler {
         Headers headers = Headers.of(headerMap);
 
         Request request;
-        if (wildRequestMapping.methodType() == RequestMapping.MethodType.GET) {
+        if (requestMapping.methodType() == RequestMapping.MethodType.GET) {
             Map<String, Object> paramMap = this.wrapperRequestParam(method, args);
             request = this.get(url, headers, paramMap);
         } else {
@@ -236,9 +236,9 @@ public class FeignProxy implements InvocationHandler {
         }
     }
 
-    private Object exceptionHandler(Method method, Object[] args, Exception e) throws Exception {
+    private Object exceptionHandler(Method method, Object[] args, Exception e) throws RuntimeException {
         if (this.fallbackFactory == null) {
-            throw e;
+            throw new RuntimeException(e);
         }
         if (!method.getDeclaringClass().equals(this.fallbackFactoryType)) {
             return this.fallbackFactory.create(e);
@@ -250,13 +250,20 @@ public class FeignProxy implements InvocationHandler {
             methodMap = newMap();
             referenceMethod = new SoftReference<>(newMap());
         }
-        Method feignMethod = methodMap.get(method);
-        if (feignMethod == null) {
-            feignMethod = feign.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
-            feignMethod.setAccessible(true);
-            methodMap.put(method, method);
+        try {
+            Method feignMethod = methodMap.get(method);
+            if (feignMethod == null) {
+                feignMethod = feign.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
+                feignMethod.setAccessible(true);
+                methodMap.put(method, method);
+            }
+            return feignMethod.invoke(feign, args);
+        } catch (InvocationTargetException e1) {
+            throw new RequestException(e1.getTargetException());
+        } catch (Exception e2) {
+            throw new RequestException(e2);
         }
-        return feignMethod.invoke(feign, args);
+
     }
 
 }

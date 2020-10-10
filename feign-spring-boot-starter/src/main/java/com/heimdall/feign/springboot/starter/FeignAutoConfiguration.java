@@ -19,6 +19,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author crh
+ * @date 2020/10/10
+ */
 @Configuration
 @ConditionalOnClass
 @EnableConfigurationProperties(FeignConfigurationProperties.class)
